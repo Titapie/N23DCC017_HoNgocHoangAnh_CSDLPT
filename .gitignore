@@ -20,8 +20,11 @@ reports/presentation_script_personal_5min.md
 reports/presentation_outline.md
 document/
 
-# Office temporary files
+# Office temporary and binary documents
 ~$*
+*.doc
+*.docx
+*.files/
 .venv/
 __pycache__/
 *.pyc

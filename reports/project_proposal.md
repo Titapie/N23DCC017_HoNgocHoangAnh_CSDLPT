@@ -60,6 +60,16 @@
 ---
 
 ## 7. Mốc thời gian dự án
-* **Mốc 1 (Tuần 5):** Thiết lập môi trường CSDL SQLite cho Site A, Site B, TTP. Hoàn thiện bộ sinh dữ liệu giao dịch.
-* **Mốc 2 (Tuần 8):** Hiện thực hóa cấu trúc dữ liệu cây Merkle, các Flask APIs truyền thông phân tán và cơ chế nhân bản đồng bộ.
-* **Mốc 3 (Tuần 12):** Thiết kế giao diện Dashboard trực quan, tích hợp bộ giả lập tấn công và kiểm toán tự động, đo đạc hiệu năng và hoàn thiện báo cáo cuối kỳ.
+* **Mốc 1 (13/04 - 30/04): Nghiên cứu và Thiết lập môi trường**
+  * Tìm hiểu cơ sở lý thuyết về cấu trúc cây Merkle, mã băm SHA-256 và cơ chế nhân bản dữ liệu phân tán (ROWA).
+  * Thiết lập môi trường CSDL SQLite vật lý riêng biệt cho Site A, Site B và TTP.
+  * Xây dựng script tự động sinh dữ liệu giao dịch mẫu (`generator.py`).
+* **Mốc 2 (01/05 - 20/05): Phát triển thuật toán & Lập trình mạng phân tán**
+  * Hiện thực hóa cấu trúc dữ liệu Merkle Tree thủ công (`core/merkle.py`), tối ưu hóa việc băm và xử lý phần tử lẻ.
+  * Xây dựng 4 node microservices REST API độc lập bằng Python Flask và kết nối truyền thông phân tán qua HTTP.
+  * Triển khai cơ chế nhân bản đồng bộ Eager Replication theo nguyên tắc ROWA trên node Coordinator.
+* **Mốc 3 (21/05 - 02/06): Tích hợp giao diện, Giả lập tấn công, Kiểm toán & Hoàn thiện**
+  * Thiết kế giao diện Web Dashboard trực quan hóa cấu trúc cây Merkle nhị phân và vẽ biểu đồ hiệu năng Chart.js.
+  * Lập trình bộ giả lập tấn công (`attack.py`) và viết script kiểm toán điều tra số (`detector.py`).
+  * Thực nghiệm giả lập các kịch bản sập node (Site B sập, TTP sập) để đánh giá khả năng chịu lỗi và tính nhất quán.
+  * Quay video demo 3-5 phút và hoàn thiện toàn bộ báo cáo đồ án nộp ngày 02/06.
