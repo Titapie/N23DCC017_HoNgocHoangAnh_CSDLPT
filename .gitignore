@@ -19,3 +19,9 @@ reports/short_answer_what_i_built.md
 reports/presentation_script_personal_5min.md
 reports/presentation_outline.md
 document/
+
+# Office temporary files
+~$*
+.venv/
+__pycache__/
+*.pyc

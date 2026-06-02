@@ -145,4 +145,4 @@ Các tài liệu báo cáo của môn học được lưu trữ tại thư mục
 * `reports/project_proposal.md` — Đề xuất dự án.
 * `reports/design_document.md` — Tài liệu thiết kế hệ thống chi tiết 2 trang.
 * `reports/final_report.md` — Báo cáo đồ án môn học chi tiết bằng tiếng Việt.
-* (Các tài liệu ôn tập vấn đáp cá nhân và kịch bản nói demo được cấu hình bỏ qua trong `.gitignore` để giữ kho lưu trữ sạch sẽ).
+
