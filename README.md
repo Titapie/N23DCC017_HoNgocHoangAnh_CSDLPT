@@ -1,5 +1,14 @@
 # Merkle Tree Log Integrity: "Immutable Audit Trail" (Đề tài 105)
 
+## THÔNG TIN SINH VIÊN THỰC HIỆN
+* **Họ và tên:** Hồ Ngọc Hoàng Anh
+* **Mã số sinh viên:** N23DCCN071
+* **Lớp:** D23CQCN01-N
+* **Môn học:** Cơ sở dữ liệu phân tán
+* **Học viện:** Học viện Công nghệ Bưu chính Viễn thông (PTIT)
+
+---
+
 Đồ án môn học **Cơ sở dữ liệu phân tán** thực hiện giải pháp bảo mật và kiểm toán dữ liệu phân tán sử dụng cấu trúc **Merkle Tree (Cây Hash)** để phát hiện các cuộc tấn công thay đổi dữ liệu từ bên trong (Insider Attack/Rogue DBA) trên nhật ký giao dịch ngân hàng.
 
 ---
@@ -141,8 +150,45 @@ BlockID: 3
 ---
 
 ## 5. Cấu Trúc Thư Mục Dự Án
-Các tài liệu báo cáo của môn học được lưu trữ tại thư mục `reports/`:
-* `reports/project_proposal.md` — Đề xuất dự án.
-* `reports/design_document.md` — Tài liệu thiết kế hệ thống chi tiết 2 trang.
-* `reports/final_report.md` — Báo cáo đồ án môn học chi tiết bằng tiếng Việt.
+Dự án được thiết kế theo cấu trúc mô-đun hóa rõ ràng, phân tách rõ vai trò của các node trong môi trường phân tán:
+```text
+d:/CSDL_PhanTan/
+├── run_all.py                 # Khởi chạy đồng bộ 4 Flask nodes (Terminal 1)
+├── core/                      # Thư viện dùng chung
+│   ├── __init__.py            # Khởi tạo package
+│   ├── database.py            # Cấu hình SQLite DB cho các Site A, B và TTP
+│   └── merkle.py              # Hiện thực thuật toán xây dựng Merkle Tree và Merkle Proof
+├── nodes/                     # Mã nguồn microservices giả lập phân tán
+│   ├── coordinator.py         # Node điều phối giao dịch, replication và Web UI Dashboard (Port 5000)
+│   ├── site_a.py              # Node Site A (Bản sạch đối chứng, Port 5001)
+│   ├── site_b.py              # Node Site B (Bản chi nhánh nghi ngờ bị tấn công, Port 5002)
+│   └── ttp.py                 # Node Trusted Third Party lưu trữ Root Hashes bất biến (Port 5003)
+├── scripts/                   # Công cụ CLI bổ trợ và kiểm thử (Terminal 2)
+│   ├── generator.py           # Sinh dữ liệu ngân hàng mẫu sạch ban đầu (500 giao dịch)
+│   ├── detector.py            # Kiểm toán toàn vẹn, so khớp Root Hash & Leaf Hash để định vị lỗi
+│   ├── attack.py              # Giả lập tấn công sửa đổi, xóa hoặc chèn giao dịch vào SQLite Site B
+│   ├── benchmark.py           # Đo lường hiệu năng của Merkle Tree trên các kích thước block khác nhau
+│   ├── view_db.py             # Xem dữ liệu nhanh của từng database
+│   └── convert_md_to_html_doc.py # Xuất báo cáo markdown sang định dạng Word (.doc) chuẩn PTIT
+├── static/                    # Tài nguyên tĩnh của Frontend Dashboard
+│   ├── css/style.css          # Định kiểu giao diện Glassmorphism và Dark Mode
+│   └── js/app.js              # Gửi request API, vẽ Merkle Tree trên Canvas và biểu đồ hiệu năng
+├── templates/
+│   └── index.html             # Giao diện Web Dashboard chính
+├── reports/                   # Thư mục chứa các tài liệu báo cáo học thuật
+│   ├── final_report.md        # File Markdown của báo cáo cuối kỳ (6 Chương chuẩn PTIT)
+│   ├── Bao_Cao_Do_An_CSDLPT_N23DCCN071.pdf # Báo cáo cuối kỳ bản PDF chính thức
+│   ├── Project_proposal.pdf   # Đề xuất dự án bản PDF chính thức
+│   └── design_document.pdf    # Tài liệu thiết kế hệ thống bản PDF chính thức
+├── requirements.txt           # Danh sách thư viện phụ thuộc (Flask, requests)
+└── .gitignore                 # Bỏ qua tệp nhị phân Word (*.doc, *.docx), DB local (*.db) và .venv
+```
+
+---
+
+## 6. Cam Kết Học Thuật & Chống Trùng Lặp
+* **Tính nguyên bản (Authenticity):** Toàn bộ mã nguồn, cấu trúc thuật toán Merkle Tree và tài liệu báo cáo của đồ án được sinh viên **Hồ Ngọc Hoàng Anh (MSSV: N23DCCN071)** tự thực hiện và cấu trúc hóa độc lập, không sao chép từ bất kỳ nguồn mã nguồn có sẵn nào khác.
+* **Cá nhân hóa mã nguồn (Authorship Headers):** Tất cả các file mã nguồn (`.py`, `.js`, `.css`, `.html`) trong dự án đều được chèn khối comment định danh thông tin sinh viên ở đầu tệp tin nhằm mục đích xác nhận bản quyền và phục vụ các công cụ quét trùng lặp mã nguồn của giảng viên.
+* **Tài liệu đối chiếu:** Các báo cáo PDF lưu trong thư mục `reports/` được biên soạn dựa trên giáo trình của **Özsu & Valduriez** nhằm đối chiếu lý thuyết một cách học thuật và chặt chẽ nhất.
+
 

@@ -1,3 +1,14 @@
+# ==============================================================================
+# HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG (PTIT)
+# ĐỒ ÁN MÔN HỌC: CƠ SỞ DỮ LIỆU PHÂN TÁN
+#
+# Đề tài 105: Merkle Tree Log Integrity: "Immutable Audit Trail"
+# Sinh viên thực hiện: Hồ Ngọc Hoàng Anh
+# Mã số sinh viên: N23DCCN071
+# Lớp: D23CQCN01-N
+#
+# Tệp tin: nodes/site_b.py - Cung cấp API dịch vụ cho Site B (Bản nghi ngờ bị tấn công)
+# ==============================================================================
 import sys
 import os
 from flask import Flask, request, jsonify
