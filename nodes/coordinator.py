@@ -65,7 +65,7 @@ def check_all_health():
 
 @app.route('/api/transaction', methods=['POST'])
 def add_transaction_api():
-    # API nhan giao dich moi tu nguoi dung, sau do nhan ban sang cac site
+    # API nhận giao dịch mới từ người dùng, sau đó nhân bản sang các site
     data = request.json
     from_acc = data.get('From_Account')
     to_acc = data.get('To_Account')
@@ -75,7 +75,7 @@ def add_transaction_api():
         return jsonify({"error": "Missing From_Account, To_Account, or Amount"}), 400
 
     try:
-        # Lay tat ca giao dich tu Site A de dem va tinh ID tiep theo
+        # Lấy tất cả giao dịch từ Site A để đếm và tính ID tiếp theo
         res_a = requests.get(f"{SITE_A_URL}/transactions")
         if res_a.status_code != 200:
             return jsonify({"error": "Failed to connect to Site A"}), 500
@@ -83,12 +83,12 @@ def add_transaction_api():
         all_txs = res_a.json()
         current_count = len(all_txs)
         
-        # Tao ma giao dich tu dong: TX-100001, TX-100002...
+        # Tạo mã giao dịch tự động: TX-100001, TX-100002...
         new_tx_num = 100001 + current_count
         new_tx_id = f"TX-{new_tx_num}"
         timestamp = datetime.now().isoformat()
         
-        # Chia block (moi block dung 100 dong giao dich)
+        # Chia block (mỗi block dùng 100 dòng giao dịch)
         block_id = (current_count // 100) + 1
         
         tx_payload = {
@@ -100,11 +100,11 @@ def add_transaction_api():
             "BlockID": block_id
         }
         
-        # Nhan ban ghi dong thoi den ca Site A va B (ROWA)
+        # Nhân bản ghi đồng thời đến cả Site A và B (ROWA)
         res_write_a = requests.post(f"{SITE_A_URL}/transaction", json=tx_payload)
         res_write_b = requests.post(f"{SITE_B_URL}/transaction", json=tx_payload)
         
-        # Neu 1 trong 2 site bi loi thi huy luon de bao ve tinh nhat quan
+        # Nếu 1 trong 2 site bị lỗi thì hủy luôn để bảo vệ tính nhất quán
         if res_write_a.status_code != 201 or res_write_b.status_code != 201:
             return jsonify({"error": "Eager replication failed to one or more nodes"}), 500
             

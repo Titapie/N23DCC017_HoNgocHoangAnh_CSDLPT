@@ -12,66 +12,66 @@
 import hashlib
 
 def hash_data(data: str) -> str:
-    # Ham bam SHA-256 cho chuoi, tra ve hexa 64 ky tu
+    # Hàm băm SHA-256 cho chuỗi, trả về hexa 64 ký tự
     return hashlib.sha256(data.encode('utf-8')).hexdigest()
 
 def serialize_transaction(tx: dict) -> str:
-    # Noi cac truong giao dich thanh 1 chuoi de bam tranh lech du lieu
-    # Lam tron Amount lay 2 so thap phan (.2f) de thong nhat
+    # Nối các trường giao dịch thành 1 chuỗi để băm tránh lệch dữ liệu
+    # Làm tròn Amount lấy 2 số thập phân (.2f) để thống nhất
     amount_val = float(tx['Amount'])
     return f"{tx['TransactionID']}|{tx['From_Account']}|{tx['To_Account']}|{amount_val:.2f}|{tx['Timestamp']}"
 
 def hash_transaction(tx: dict) -> str:
-    # Chuyen giao dich thanh chuoi va bam de lam nut la
+    # Chuyển giao dịch thành chuỗi và băm để làm nút lá
     try:
         serialized = serialize_transaction(tx)
         return hash_data(serialized)
     except Exception as e:
-        # Neu loi thi sap xep key roi noi lai lam backup
+        # Nếu lỗi thì sắp xếp key rồi nối lại làm backup
         keys = sorted(tx.keys())
         serialized = "|".join(f"{k}:{tx[k]}" for k in keys)
         return hash_data(serialized)
 
 class MerkleNode:
-    # Cau truc 1 Node trong cay Merkle
+    # Cấu trúc 1 Node trong cây Merkle
     def __init__(self, hash_val: str, left=None, right=None, data=None):
         self.hash = hash_val
         self.left = left
         self.right = right
-        self.data = data # Chi luu du lieu giao dich o nut la de doi chieu
+        self.data = data # Chỉ lưu dữ liệu giao dịch ở nút lá để đối chứng
 
     def is_leaf(self) -> bool:
-        # Nut la thi khong co con trai va con phai
+        # Nút lá thì không có con trái và con phải
         return self.left is None and self.right is None
 
 class MerkleTree:
-    # Class dung va quan ly Merkle Tree
+    # Class dựng và quản lý Merkle Tree
     def __init__(self, transactions: list):
         self.transactions = transactions
-        # Tao danh sach cac nut la tu giao dich
+        # Tạo danh sách các nút lá từ giao dịch
         self.leaves = [MerkleNode(hash_transaction(tx), data=tx) for tx in transactions]
         
         if not self.leaves:
-            # Neu rong thi de hash rong lam root
+            # Nếu rỗng thì để hash rỗng làm root
             self.root = MerkleNode(hash_data(""))
         else:
-            # Dung cay tu duoi len de lay root node
+            # Dựng cây từ dưới lên để lấy root node
             self.root = self._build(self.leaves)
 
     def _build(self, nodes: list) -> MerkleNode:
-        # Thuhat toan de quy ghep cap bam tu duoi len
+        # Thuật toán đệ quy ghép cặp băm từ dưới lên
         if len(nodes) == 1:
-            # Con 1 nut duy nhat thi chinh la Root
+            # Còn 1 nút duy nhất thì chính là Root
             return nodes[0]
 
         next_level = []
-        # Gom tung cap 2 nut de bam len cha
+        # Gom từng cặp 2 nút để băm lên cha
         for i in range(0, len(nodes), 2):
             left = nodes[i]
             if i + 1 < len(nodes):
                 right = nodes[i + 1]
             else:
-                # Neu so nut le thi copy nut cuoi cung ghep cap (padding)
+                # Nếu số nút lẻ thì copy nút cuối cùng ghép cặp (padding)
                 right = MerkleNode(left.hash, left=left.left, right=left.right, data=left.data)
             
             # Parent = hash(left + right)
@@ -79,19 +79,19 @@ class MerkleTree:
             parent = MerkleNode(combined_hash, left=left, right=right)
             next_level.append(parent)
 
-        # De quy len level cao hon
+        # Đệ quy lên level cao hơn
         return self._build(next_level)
 
     def get_root_hash(self) -> str:
-        # Lay Root Hash
+        # Lấy Root Hash
         return self.root.hash
 
     def get_leaf_hashes(self) -> list:
-        # Lay danh sach hash cua tat ca nut la
+        # Lấy danh sách hash của tất cả nút lá
         return [node.hash for node in self.leaves]
 
     def get_proof_by_index(self, index: int) -> list:
-        # Sinh Merkle Proof de chung minh giao dich o index co nam trong block hay khong
+        # Sinh Merkle Proof để chứng minh giao dịch ở index có nằm trong block hay không
         if index < 0 or index >= len(self.leaves):
             return None
 

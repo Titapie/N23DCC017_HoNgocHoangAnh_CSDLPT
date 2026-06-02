@@ -27,7 +27,7 @@ def view_transaction(tx_id):
     print(f"   CHI TIẾT GIAO DỊCH {tx_id} DƯỚI CSDL VẬT LÝ   ")
     print("==================================================")
     
-    # 1. Query Site A (Clean Copy)
+    # 1. Truy vấn thông tin giao dịch ở Site A (Bản sạch)
     tx_a = None
     if os.path.exists(DB_A_PATH):
         conn_a = sqlite3.connect(DB_A_PATH)
@@ -35,7 +35,7 @@ def view_transaction(tx_id):
         tx_a = conn_a.execute("SELECT * FROM Banking_Transactions WHERE TransactionID=?", (tx_id,)).fetchone()
         conn_a.close()
     
-    # 2. Query Site B (Attacked Copy)
+    # 2. Truy vấn thông tin giao dịch ở Site B (Bản chi nhánh)
     tx_b = None
     if os.path.exists(DB_B_PATH):
         conn_b = sqlite3.connect(DB_B_PATH)
@@ -43,7 +43,7 @@ def view_transaction(tx_id):
         tx_b = conn_b.execute("SELECT * FROM Banking_Transactions WHERE TransactionID=?", (tx_id,)).fetchone()
         conn_b.close()
         
-    # Print comparison
+    # In kết quả đối chứng
     if not tx_a and not tx_b:
         print(f"[x] Không tìm thấy giao dịch {tx_id} ở cả hai database.")
         return

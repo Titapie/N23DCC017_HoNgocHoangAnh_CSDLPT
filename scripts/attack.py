@@ -15,7 +15,7 @@ import argparse
 import sqlite3
 from datetime import datetime
 
-# Allow importing core package
+# Cho phép import thư mục core từ thư mục cha
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from core.database import get_db_connection
 
@@ -38,7 +38,7 @@ def execute_attack(args):
                 print("[x] ERROR: --transaction-id and --amount are required for 'update' attack.")
                 sys.exit(1)
                 
-            # Check if exists
+            # Kiểm tra xem giao dịch có tồn tại trong database hay không
             cursor.execute("SELECT Amount FROM Banking_Transactions WHERE TransactionID = ?", (tx_id,))
             row = cursor.fetchone()
             if not row:
@@ -58,7 +58,7 @@ def execute_attack(args):
                 print("[x] ERROR: --transaction-id is required for 'delete' attack.")
                 sys.exit(1)
                 
-            # Check if exists
+            # Kiểm tra xem giao dịch có tồn tại trong database hay không
             cursor.execute("SELECT * FROM Banking_Transactions WHERE TransactionID = ?", (tx_id,))
             row = cursor.fetchone()
             if not row:

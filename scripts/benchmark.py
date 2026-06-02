@@ -16,7 +16,7 @@ import json
 import random
 from datetime import datetime
 
-# Allow importing from parent directory
+# Cho phép import thư mục core từ thư mục cha
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from core.merkle import MerkleTree, serialize_transaction, hash_data
 
@@ -46,39 +46,35 @@ def run_benchmark():
         print(f"Profiling block size: {size} transactions...")
         txs = generate_dummy_transactions(size)
         
-        # 1. Measure Build Time
+        # 1. Đo thời gian dựng cây Merkle Tree
         start_build = time.perf_counter()
         tree = MerkleTree(txs)
         end_build = time.perf_counter()
         build_time_ms = (end_build - start_build) * 1000
         
-        # 2. Measure Proof Generation and Verification
+        # 2. Đo thời gian sinh Proof và xác minh
         tx_id = txs[random.randint(0, size - 1)]['TransactionID']
         
-        # Sibling proof by index
+        # Lấy Proof anh em của một giao dịch theo chỉ mục ngẫu nhiên
         start_proof = time.perf_counter()
         proof = tree.get_proof_by_index(random.randint(0, size - 1))
         end_proof = time.perf_counter()
         proof_time_ms = (end_proof - start_proof) * 1000
         
-        # Verification time
+        # Đo thời gian xác minh Proof
         leaf_hash = tree.leaves[0].hash
         start_verify = time.perf_counter()
         tree.verify_proof(leaf_hash, proof, tree.get_root_hash())
         end_verify = time.perf_counter()
         verify_time_ms = (end_verify - start_verify) * 1000
 
-        # 3. Calculate Storage Overhead
-        # Approximate size of transaction records in JSON string format
+        # 3. Tính toán dung lượng dư thừa của cấu trúc Merkle Tree
+        # Ước tính dung lượng của các bản ghi giao dịch thô
         raw_data_size = sum(len(serialize_transaction(tx)) for tx in txs)
         
-        # Merkle Tree overhead: Root Hash is 32 bytes (64 hex characters)
-        # Tree leaves and intermediate nodes hashes
-        # A tree of N nodes has roughly 2N-1 nodes in total.
-        # But we only store the Root Hash (64 bytes in hex) in the TTP!
-        # So TTP overhead is 64 bytes.
-        # Let's count that.
-        ttp_overhead_bytes = 64  # Size of 1 Root Hash string
+        # Với mô hình của hệ thống, ta chỉ cần lưu trữ Root Hash (64 ký tự hex = 64 bytes)
+        # trên TTP độc lập để làm mốc đối chứng toàn vẹn.
+        ttp_overhead_bytes = 64  # Kích thước chuỗi Root Hash
         overhead_pct = (ttp_overhead_bytes / raw_data_size) * 100
 
         results.append({
@@ -96,7 +92,7 @@ def run_benchmark():
         print(f"  Verify Time: {verify_time_ms:.4f} ms")
         print(f"  Storage Overhead: {overhead_pct:.6f} %\n")
 
-    # Save to JSON
+    # Lưu kết quả đo đạc ra file JSON
     output_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../static/benchmark_results.json'))
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:
