@@ -3,7 +3,7 @@
 ## 1. Thông tin đồ án
 * **Sinh viên thực hiện:** Hồ Ngọc Hoàng Anh
 * **Mã số sinh viên:** N23DCCN071
-* **Lớp:** D23CQCN01-N
+* **Lớp:** D23CQCN02-N
 * **Đề tài:** Đề tài #105: Merkle Tree Log Integrity: "Immutable Audit Trail" (Phát Hiện Và Truy Vết Lỗi Toàn Vẹn Nhật Ký Giao Dịch Bằng Cây Merkle Phân Tán)
 
 ---

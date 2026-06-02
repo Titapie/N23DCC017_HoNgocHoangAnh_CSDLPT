@@ -3,7 +3,7 @@
 ## THÔNG TIN SINH VIÊN THỰC HIỆN
 * **Họ và tên:** Hồ Ngọc Hoàng Anh
 * **Mã số sinh viên:** N23DCCN071
-* **Lớp:** D23CQCN01-N
+* **Lớp:** D23CQCN02-N
 * **Môn học:** Cơ sở dữ liệu phân tán
 * **Học viện:** Học viện Công nghệ Bưu chính Viễn thông (PTIT)
 

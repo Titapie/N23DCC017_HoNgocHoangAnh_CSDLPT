@@ -5,7 +5,7 @@
 # Đề tài 105: Merkle Tree Log Integrity: "Immutable Audit Trail"
 # Sinh viên thực hiện: Hồ Ngọc Hoàng Anh
 # Mã số sinh viên: N23DCCN071
-# Lớp: D23CQCN01-N
+# Lớp: D23CQCN02-N
 #
 # Tệp tin: scripts/view_db.py - Script CLI xem nhanh chi tiết giao dịch từ 2 database
 # ==============================================================================
