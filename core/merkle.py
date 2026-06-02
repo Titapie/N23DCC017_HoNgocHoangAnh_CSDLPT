@@ -12,112 +12,86 @@
 import hashlib
 
 def hash_data(data: str) -> str:
-    """
-    Hàm băm dữ liệu dạng chuỗi bằng giải thuật SHA-256.
-    Đầu vào: Chuỗi văn bản (data).
-    Đầu ra: Chuỗi mã băm Hexadecimal dài 64 ký tự (256-bit).
-    """
+    # Ham bam SHA-256 cho chuoi, tra ve hexa 64 ky tu
     return hashlib.sha256(data.encode('utf-8')).hexdigest()
 
 def serialize_transaction(tx: dict) -> str:
-    """
-    Chuẩn hóa dữ liệu giao dịch thành một chuỗi duy nhất để băm thống nhất.
-    Đầu vào: Một dictionary chứa thông tin giao dịch.
-    Đầu ra: Chuỗi định dạng: "TransactionID|From_Account|To_Account|Amount|Timestamp"
-    Số tiền (Amount) luôn được định dạng với đúng 2 chữ số thập phân (.2f) để tránh lệch băm giữa các môi trường khác nhau.
-    """
+    # Noi cac truong giao dich thanh 1 chuoi de bam tranh lech du lieu
+    # Lam tron Amount lay 2 so thap phan (.2f) de thong nhat
     amount_val = float(tx['Amount'])
     return f"{tx['TransactionID']}|{tx['From_Account']}|{tx['To_Account']}|{amount_val:.2f}|{tx['Timestamp']}"
 
 def hash_transaction(tx: dict) -> str:
-    """
-    Chuyển giao dịch thành chuỗi chuẩn hóa rồi tiến hành băm SHA-256 làm nút lá của cây Merkle.
-    Nếu có bất kỳ lỗi định dạng nào, hàm sẽ tự động fallback sang cách băm thông qua việc sắp xếp keys.
-    """
+    # Chuyen giao dich thanh chuoi va bam de lam nut la
     try:
         serialized = serialize_transaction(tx)
         return hash_data(serialized)
     except Exception as e:
-        # Fallback: Nếu cấu trúc dữ liệu bị lệch, sắp xếp theo tên thuộc tính rồi băm
+        # Neu loi thi sap xep key roi noi lai lam backup
         keys = sorted(tx.keys())
         serialized = "|".join(f"{k}:{tx[k]}" for k in keys)
         return hash_data(serialized)
 
 class MerkleNode:
-    """
-    Lớp định nghĩa cấu trúc của một Node trong cây Merkle (Merkle Node).
-    - hash_val: Giá trị băm của node.
-    - left: Con trỏ tới Node con bên trái (None nếu là nút lá).
-    - right: Con trỏ tới Node con bên phải (None nếu là nút lá).
-    - data: Lưu thông tin giao dịch gốc (chỉ áp dụng ở nút lá để đối chứng).
-    """
+    # Cau truc 1 Node trong cay Merkle
     def __init__(self, hash_val: str, left=None, right=None, data=None):
         self.hash = hash_val
         self.left = left
         self.right = right
-        self.data = data
+        self.data = data # Chi luu du lieu giao dich o nut la de doi chieu
 
     def is_leaf(self) -> bool:
-        """Kiểm tra xem node này có phải là nút lá (không có con) hay không."""
+        # Nut la thi khong co con trai va con phai
         return self.left is None and self.right is None
 
 class MerkleTree:
-    """
-    Lớp định nghĩa cấu trúc và thuật toán xây dựng Cây Merkle.
-    """
+    # Class dung va quan ly Merkle Tree
     def __init__(self, transactions: list):
         self.transactions = transactions
-        # Bắt đầu bằng việc băm tất cả các giao dịch trong danh sách để tạo ra tập các Node lá
+        # Tao danh sach cac nut la tu giao dich
         self.leaves = [MerkleNode(hash_transaction(tx), data=tx) for tx in transactions]
         
         if not self.leaves:
-            # Nếu block trống không có giao dịch, gốc là băm của chuỗi rỗng
+            # Neu rong thi de hash rong lam root
             self.root = MerkleNode(hash_data(""))
         else:
-            # Dựng cây Merkle từ dưới lên (từ các nút lá) để tìm nút Gốc (Root)
+            # Dung cay tu duoi len de lay root node
             self.root = self._build(self.leaves)
 
     def _build(self, nodes: list) -> MerkleNode:
-        """
-        Thuật toán đệ quy xây dựng cây Merkle theo cặp từ dưới lên trên.
-        """
-        # Nếu chỉ còn duy nhất 1 nút, đó chính là nút Gốc (Merkle Root)
+        # Thuhat toan de quy ghep cap bam tu duoi len
         if len(nodes) == 1:
+            # Con 1 nut duy nhat thi chinh la Root
             return nodes[0]
 
         next_level = []
-        # Duyệt qua các node hiện tại theo cặp (bước nhảy = 2)
+        # Gom tung cap 2 nut de bam len cha
         for i in range(0, len(nodes), 2):
             left = nodes[i]
             if i + 1 < len(nodes):
                 right = nodes[i + 1]
             else:
-                # Nếu số lượng nút ở tầng này là lẻ, sao chép nút cuối làm nút bên phải
-                # (Quy định chuẩn của cây nhị phân Merkle Tree)
+                # Neu so nut le thi copy nut cuoi cung ghep cap (padding)
                 right = MerkleNode(left.hash, left=left.left, right=left.right, data=left.data)
             
-            # Tính mã băm kết hợp: ParentHash = SHA-256(LeftHash + RightHash)
+            # Parent = hash(left + right)
             combined_hash = hash_data(left.hash + right.hash)
             parent = MerkleNode(combined_hash, left=left, right=right)
             next_level.append(parent)
 
-        # Đệ quy tiếp tục xây dựng tầng cao hơn
+        # De quy len level cao hon
         return self._build(next_level)
 
     def get_root_hash(self) -> str:
-        """Trả về giá trị Root Hash (Mã băm gốc) đại diện cho toàn bộ block."""
+        # Lay Root Hash
         return self.root.hash
 
     def get_leaf_hashes(self) -> list:
-        """Trả về danh sách tất cả các mã băm lá (mã băm của từng giao dịch lẻ)."""
+        # Lay danh sach hash cua tat ca nut la
         return [node.hash for node in self.leaves]
 
     def get_proof_by_index(self, index: int) -> list:
-        """
-        Tạo Merkle Proof (Đường dẫn chứng minh) cho một giao dịch tại vị trí index.
-        Proof chứa danh sách các node anh em (sibling) và hướng tương ứng (trái/phải)
-        cần thiết để tính toán lại Root Hash từ lá lên.
-        """
+        # Sinh Merkle Proof de chung minh giao dich o index co nam trong block hay khong
         if index < 0 or index >= len(self.leaves):
             return None
 

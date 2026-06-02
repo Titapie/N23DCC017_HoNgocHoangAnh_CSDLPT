@@ -65,20 +65,7 @@ def check_all_health():
 
 @app.route('/api/transaction', methods=['POST'])
 def add_transaction_api():
-    """
-    TIẾP NHẬN GIAO DỊCH TỪ CLIENT VÀ NHÂN BẢN PHÂN TÁN.
-    Quy trình hoạt động:
-      1. Khách hàng POST giao dịch (From, To, Amount).
-      2. Coordinator truy vấn Site A để đếm số giao dịch hiện tại, từ đó sinh tự động TransactionID (TX-10000x) và xác định số BlockID (cứ 100 giao dịch là 1 block).
-      3. Thực hiện giải thuật Nhân bản đồng bộ (Eager Replication) sử dụng chiến lược ROWA (Read-One/Write-All). 
-         Giao dịch được ghi đồng thời đến cả Site A và Site B. Nếu một bên lỗi, giao dịch sẽ bị Rollback để đảm bảo tính nhất quán (Consistency).
-      4. KIỂM TRA ĐỦ BLOCK (ĐỦ 100 TRANSACTION): 
-         Nếu tổng số giao dịch đạt bội số của 100 (khối hoàn thành), Coordinator tự động:
-           a. Lấy danh sách 100 giao dịch của block đó từ Site A.
-           b. Xây dựng cây Merkle Tree cục bộ.
-           c. Tính toán Root Hash (mã băm gốc đại diện cho khối).
-           d. Gửi thông tin (BlockID, StartTx, EndTx, RootHash) lên Node TTP bên thứ 3 tin cậy để lưu trữ bất biến.
-    """
+    # API nhan giao dich moi tu nguoi dung, sau do nhan ban sang cac site
     data = request.json
     from_acc = data.get('From_Account')
     to_acc = data.get('To_Account')
@@ -88,7 +75,7 @@ def add_transaction_api():
         return jsonify({"error": "Missing From_Account, To_Account, or Amount"}), 400
 
     try:
-        # Lấy danh sách giao dịch từ Site A để xác định số thứ tự tiếp theo
+        # Lay tat ca giao dich tu Site A de dem va tinh ID tiep theo
         res_a = requests.get(f"{SITE_A_URL}/transactions")
         if res_a.status_code != 200:
             return jsonify({"error": "Failed to connect to Site A"}), 500
@@ -96,11 +83,12 @@ def add_transaction_api():
         all_txs = res_a.json()
         current_count = len(all_txs)
         
+        # Tao ma giao dich tu dong: TX-100001, TX-100002...
         new_tx_num = 100001 + current_count
         new_tx_id = f"TX-{new_tx_num}"
         timestamp = datetime.now().isoformat()
         
-        # Công thức chia block: 0-99 -> Block 1, 100-199 -> Block 2, v.v.
+        # Chia block (moi block dung 100 dong giao dich)
         block_id = (current_count // 100) + 1
         
         tx_payload = {
@@ -112,11 +100,11 @@ def add_transaction_api():
             "BlockID": block_id
         }
         
-        # Nhân bản ghi đồng thời (ROWA)
+        # Nhan ban ghi dong thoi den ca Site A va B (ROWA)
         res_write_a = requests.post(f"{SITE_A_URL}/transaction", json=tx_payload)
         res_write_b = requests.post(f"{SITE_B_URL}/transaction", json=tx_payload)
         
-        # Nếu một trong hai bản sao thất bại, báo lỗi nhất quán hệ thống
+        # Neu 1 trong 2 site bi loi thi huy luon de bao ve tinh nhat quan
         if res_write_a.status_code != 201 or res_write_b.status_code != 201:
             return jsonify({"error": "Eager replication failed to one or more nodes"}), 500
             
