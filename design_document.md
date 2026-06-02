@@ -74,7 +74,7 @@ CREATE TABLE Block_Hashes (
 
 ### B. Quy chuẩn thuật toán Cây Merkle
 - **Chuẩn hóa lá (Leaves Serialization)**: Các giao dịch được chuyển thành chuỗi chuẩn hóa trước khi băm:
-  $$S(tx) = \text{TransactionID} \mid \text{From\_Account} \mid \text{To\_Account} \mid \text{Amount (2 chữ số thập phân)} \mid \text{Timestamp}$$
+  $$S(tx) = \text{TransactionID} \mid \text{From\\_Account} \mid \text{To\\_Account} \mid \text{Amount (2 chữ số thập phân)} \mid \text{Timestamp}$$
   $$LeafHash = \text{SHA256}(S(tx))$$
 - **Xử lý số lá lẻ**: Nếu một tầng có số lượng nút lẻ, nút cuối cùng sẽ được tự động nhân đôi để ghép cặp cho đủ cấu trúc cây nhị phân cân bằng.
 - **Dựng nút cha**: Ghép chuỗi hai nút con rồi thực hiện băm SHA-256:

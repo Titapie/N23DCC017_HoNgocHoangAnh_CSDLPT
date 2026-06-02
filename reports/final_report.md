@@ -194,7 +194,7 @@ CREATE TABLE Block_Hashes (
 ### 3.5. Thiết kế chức năng (Merkle Algorithm & Fault Tolerance)
 #### A. Thuật toán Cây Merkle (Merkle Engine)
 * **Chuẩn hóa lá (Leaf Serialization):** Mỗi giao dịch được chuẩn hóa thành chuỗi định dạng nghiêm ngặt để đảm bảo mã băm không bị lệch pha khi chuyển đổi môi trường:
-  $$S(tx) = \text{TransactionID} + "|" + \text{From\_Account} + "|" + \text{To\_Account} + "|" + \text{format\_float}(Amount) + "|" + \text{Timestamp}$$
+  $$S(tx) = \text{TransactionID} + "|" + \text{From\\_Account} + "|" + \text{To\\_Account} + "|" + \text{format\\_float}(Amount) + "|" + \text{Timestamp}$$
   $$LeafHash = \text{SHA256}(S(tx))$$
 * **Xử lý nút lá lẻ:** Nếu tổng số lượng nút ở tầng hiện tại là số lẻ, thuật toán sao chép (duplicate) nút cuối cùng để thực hiện ghép cặp cân bằng.
 * **Tính nút cha:** Ghép cặp hai mã băm con rồi băm kết hợp.
