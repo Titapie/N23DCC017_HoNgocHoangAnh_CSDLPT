@@ -1,0 +1,21 @@
+# Python virtual environment
+.venv/
+__pycache__/
+*.pyc
+
+# Generated runtime databases
+data/
+*.db
+
+# Performance results generated at runtime (optional, but benchmark results can be ignored or kept)
+static/benchmark_results.json
+
+# Local helper files and study guides (kept locally for exam prep, but not pushed to GitHub)
+reports/personal_study_guide.md
+reports/personal_defense_qna.md
+reports/one_day_study_plan.md
+reports/demo_talk_track_personal.md
+reports/short_answer_what_i_built.md
+reports/presentation_script_personal_5min.md
+reports/presentation_outline.md
+document/

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immutable Audit Trail - Merkle Tree Log Integrity</title>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Dashboard Header -->
+        <header>
+            <h1>Immutable Audit Trail <span>Topic 105</span></h1>
+            
+            <div class="node-status-container">
+                <div class="node-badge">
+                    <span class="status-dot" id="status-coord"></span>
+                    COORDINATOR (5000)
+                </div>
+                <div class="node-badge">
+                    <span class="status-dot" id="status-a"></span>
+                    SITE A (5001)
+                </div>
+                <div class="node-badge">
+                    <span class="status-dot" id="status-b"></span>
+                    SITE B (5002)
+                </div>
+                <div class="node-badge">
+                    <span class="status-dot" id="status-ttp"></span>
+                    TTP (5003)
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Warnings Panel -->
+        <div id="audit-alert-container"></div>
+
+        <!-- Dashboard Layout -->
+        <div class="dashboard-grid">
+            
+            <!-- Left Side: Data and Visualization -->
+            <div class="left-column">
+                
+                <!-- Section 1: Transaction Viewer -->
+                <div class="glass-panel">
+                    <h2> Nhật ký giao dịch (Site B Database)</h2>
+                    
+                    <div class="block-selection">
+                        <label for="block-select">Lọc theo Block:</label>
+                        <select id="block-select">
+                            <option value="1">Block 1 (Đang mở)</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>TransactionID</th>
+                                    <th>From Account</th>
+                                    <th>To Account</th>
+                                    <th>Amount</th>
+                                    <th>Block ID</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tx-table-body">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; color: var(--text-secondary);">
+                                        Đang tải danh sách giao dịch...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Section 2: Merkle Tree Visualizer -->
+                <div class="glass-panel">
+                    <h2> Sơ đồ Merkle Tree (Block Hashes)</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.8rem;">
+                        Rê chuột vào các nút để kiểm tra chi tiết giá trị Hash của từng node trong cây nhị phân.
+                    </p>
+                    <div class="merkle-canvas-container">
+                        <canvas id="tree-visual"></canvas>
+                        <div class="merkle-node-tooltip" id="tree-tooltip"></div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Performance Benchmarks -->
+                <div class="glass-panel">
+                    <h2> Đánh giá hiệu năng Merkle Tree (Benchmarks)</h2>
+                    <div class="benchmarks-grid" style="margin-bottom: 1rem;">
+                        <div>
+                            <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-secondary);">Thời gian sinh cây (Build Time)</h4>
+                            <div class="chart-container">
+                                <canvas id="chart-build"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-secondary);">Dung lượng Root Hash lưu ở TTP (%)</h4>
+                            <div class="chart-container">
+                                <canvas id="chart-overhead"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="btn-run-benchmark" class="btn btn-secondary" style="width: 100%;">
+                        Run Performance Benchmarks
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Right Side: Interaction Panels -->
+            <div class="right-column">
+                
+                <!-- Section 4: Create Transaction -->
+                <div class="glass-panel">
+                    <h2> Khởi tạo Giao dịch mới</h2>
+                    <form id="tx-form">
+                        <div class="form-group">
+                            <label for="tx-from">Tài khoản chuyển (From)</label>
+                            <input type="text" id="tx-from" placeholder="Ví dụ: ACC001" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tx-to">Tài khoản nhận (To)</label>
+                            <input type="text" id="tx-to" placeholder="Ví dụ: ACC002" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tx-amount">Số tiền (USD)</label>
+                            <input type="number" id="tx-amount" step="0.01" min="0.1" placeholder="Số tiền" required>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">
+                            Gửi giao dịch (Eager Replicate)
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Section 5: Seeding & Audit -->
+                <div class="glass-panel">
+                    <h2> Kiểm toán & Dữ liệu mẫu</h2>
+                    <button id="btn-seed" class="btn btn-secondary" style="width: 100%; margin-bottom: 1rem;">
+                        Init Seed Data (500 TXs)
+                    </button>
+                    <button id="btn-audit" class="btn btn-warning" style="width: 100%;">
+                        Khởi chạy Tamper Detector
+                    </button>
+                    
+                    <div class="audit-log-container" id="audit-logs">
+                        <div class="audit-log-line">[i] Hệ thống sẵn sàng chạy audit.</div>
+                    </div>
+                </div>
+
+                <!-- Section 6: Attack Simulator Panel -->
+                <div class="glass-panel" style="border-color: rgba(239, 68, 68, 0.25);">
+                    <h2 style="color: #fca5a5;"> Insider Attack Simulator</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                        Giả lập quản trị viên (Rogue DBA) tại Site B kết nối trực tiếp vào CSDL SQLite để thay đổi dữ liệu trái phép (bypass API).
+                    </p>
+                    <form id="attack-form">
+                        <div class="form-group">
+                            <label for="attack-action">Hành vi tấn công</label>
+                            <select id="attack-action">
+                                <option value="modify">Sửa đổi giá trị Amount (Update)</option>
+                                <option value="delete">Xóa giao dịch (Delete)</option>
+                                <option value="inject">Chèn giao dịch giả mạo (Insert)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="attack-block-select">Chọn Block tấn công</label>
+                            <select id="attack-block-select">
+                                <option value="">-- Chọn Block --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="attack-tx-select">Chọn TransactionID</label>
+                            <select id="attack-tx-select">
+                                <option value="">-- Chọn Giao dịch --</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="attack-amount-group">
+                            <label for="attack-amount">Số tiền / Số tiền giả mạo ($)</label>
+                            <input type="number" id="attack-amount" step="0.01" placeholder="Ví dụ: 1000.00">
+                        </div>
+                        <button type="submit" class="btn btn-danger" style="width: 100%;">
+                            Thực hiện Tấn công (Site B)
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Main JS app -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
