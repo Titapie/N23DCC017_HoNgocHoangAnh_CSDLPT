@@ -168,8 +168,7 @@ d:/CSDL_PhanTan/
 │   ├── detector.py            # Kiểm toán toàn vẹn, so khớp Root Hash & Leaf Hash để định vị lỗi
 │   ├── attack.py              # Giả lập tấn công sửa đổi, xóa hoặc chèn giao dịch vào SQLite Site B
 │   ├── benchmark.py           # Đo lường hiệu năng của Merkle Tree trên các kích thước block khác nhau
-│   ├── view_db.py             # Xem dữ liệu nhanh của từng database
-│   └── convert_md_to_html_doc.py # Xuất báo cáo markdown sang định dạng Word (.doc) chuẩn PTIT
+│   └── view_db.py             # Xem dữ liệu nhanh của từng database
 ├── static/                    # Tài nguyên tĩnh của Frontend Dashboard
 │   ├── css/style.css          # Định kiểu giao diện Glassmorphism và Dark Mode
 │   └── js/app.js              # Gửi request API, vẽ Merkle Tree trên Canvas và biểu đồ hiệu năng
