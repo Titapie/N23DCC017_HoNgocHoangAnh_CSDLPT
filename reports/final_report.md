@@ -13,7 +13,7 @@
 
 * **Giảng viên hướng dẫn:** [Tên Giảng Viên]
 * **Sinh viên thực hiện:** Hồ Ngọc Hoàng Anh
-* **Mã số sinh viên:** N23DCC017
+* **Mã số sinh viên:** N23DCCN071
 * **Lớp:** [Tên Lớp]
 * **Nhóm đăng ký:** CyberAuditors
 
@@ -61,7 +61,7 @@
 Đồ án tập trung giải quyết bài toán bảo vệ tính toàn vẹn của nhật ký giao dịch ngân hàng phân tán chống lại mối đe dọa tấn công nội bộ (Insider Attack). Hệ thống sử dụng cấu trúc dữ liệu cây Merkle (Merkle Tree) để tạo ra dấu vân tay mật mã (Root Hash) cho từng khối giao dịch và đăng ký lên Bên thứ ba tin cậy (TTP). Khi xảy ra can thiệp vật lý vào CSDL thô tại chi nhánh (Site B), hệ thống sẽ đối chiếu Root Hash cục bộ với TTP để phát hiện tức thời, đồng thời chạy giải thuật so khớp Leaf Hash với bản sao sạch (Site A) nhằm chỉ điểm và điều tra pháp lý số (Forensics) chính xác bản ghi bị sửa đổi, xóa hoặc chèn trái phép. Hệ thống được triển khai dưới dạng 4 node microservices REST API giao tiếp qua HTTP và tích hợp giao diện Web Dashboard quản trị sinh động.
 
 ## BẢNG PHÂN CÔNG CÔNG VIỆC TRONG NHÓM
-Vì đây là đồ án thực hiện cá nhân, sinh viên **Hồ Ngọc Hoàng Anh (N23DCC017)** chịu trách nhiệm thực hiện 100% các công việc của dự án, bao gồm:
+Vì đây là đồ án thực hiện cá nhân, sinh viên **Hồ Ngọc Hoàng Anh (N23DCCN071)** chịu trách nhiệm thực hiện 100% các công việc của dự án, bao gồm:
 * Khảo sát yêu cầu, thiết kế kiến trúc hệ thống và thiết kế CSDL.
 * Lập trình cấu trúc dữ liệu Merkle Tree và giải thuật kiểm toán đối chiếu chéo.
 * Xây dựng 4 node microservices (Coordinator, Site A, Site B, TTP) bằng Flask.
