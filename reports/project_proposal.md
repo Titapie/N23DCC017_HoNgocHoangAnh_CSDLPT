@@ -1,14 +1,10 @@
 # Đề Xuất Đồ Án Cơ Sở Dữ Liệu Phân Tán
 
-**Hạn nộp:** Tuần 3  
-**Mã đề tài & Phân nhóm:** Đề tài #105: Bảo mật và Quyền riêng tư (Security and Privacy)
-
----
-
 ## 1. Thông tin đồ án
-* **Tên nhóm:** CyberAuditors  
-* **Sinh viên thực hiện:** [Tên sinh viên]  
-* **Tên đề tài:** Merkle Tree Log Integrity: "Immutable Audit Trail" (Phát Hiện Và Truy Vết Lỗi Toàn Vẹn Nhật Ký Giao Dịch Bằng Cây Merkle Phân Tán)
+* **Sinh viên thực hiện:** Hồ Ngọc Hoàng Anh
+* **Mã số sinh viên:** N23DCCN071
+* **Lớp:** D23CQCN01-N
+* **Đề tài:** Đề tài #105: Merkle Tree Log Integrity: "Immutable Audit Trail" (Phát Hiện Và Truy Vết Lỗi Toàn Vẹn Nhật Ký Giao Dịch Bằng Cây Merkle Phân Tán)
 
 ---
 
